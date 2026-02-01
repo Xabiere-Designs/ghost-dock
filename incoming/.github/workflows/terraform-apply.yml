@@ -1,0 +1,23 @@
+name: tf-apply
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "terraform/**" ]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+      - name: terraform apply (dev aws)
+        working-directory: terraform/envs/dev/aws
+        run: |
+          terraform init
+          terraform apply -auto-approve

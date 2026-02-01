@@ -1,0 +1,33 @@
+name: deploy-apps
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "apps/**", "helm/**", "gitops/**" ]
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build & push API
+        working-directory: apps/api
+        run: |
+          IMAGE=${{ secrets.ECR_REPO_API }}:${{ github.sha }}
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+      - name: Build & push WEB
+        working-directory: apps/web
+        run: |
+          IMAGE=${{ secrets.ECR_REPO_WEB }}:${{ github.sha }}
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+      - name: Update GitOps values
+        run: |
+          sed -i "s#image:.*#image: ${{ secrets.ECR_REPO_API }}:${{ github.sha }}#" gitops/values/dev/api.yaml
+          sed -i "s#image:.*#image: ${{ secrets.ECR_REPO_WEB }}:${{ github.sha }}#" gitops/values/dev/web.yaml
+      - name: Commit GitOps changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bump images"
+          file_pattern: gitops/values/dev/*.yaml
