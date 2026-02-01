@@ -1,4 +1,0 @@
-api:
-  image: REPLACE_API_IMAGE
-web:
-  image: REPLACE_WEB_IMAGE

@@ -1,2 +1,3 @@
-# ghost-dock
-## What this repo demonstrates  - **Pipelines:** CI → artifact registry → Helm chart → GitOps deploy - **Guardrails:** static analysis, dependency checks, required reviews - **Ops UX:** dashboards, alerts, log search, traceability, release notes - **Repeatability:** one command bootstraps infra and app environments  ## Repo layout (proposed)
+# ghost-dock (monorepo)
+Monorepo starter for Terraform, AWS, GCP OAuth, Kubernetes, Helm, Istio, Knative,
+Datadog, Prometheus, Grafana, Argo CD, Cloudflare, NGINX, and GitHub Actions.
